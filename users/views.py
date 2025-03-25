@@ -11,6 +11,7 @@ from django.utils.crypto import get_random_string
 from datetime import timedelta
 from .models import OTPVerification
 from .serializers import UserRegistrationSerializer, OTPVerifySerializer, UserLoginSerializer, ForgotPasswordSerializer, ResetPasswordSerializer
+from .permissions import IsAdminUser
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.conf import settings
@@ -111,3 +112,33 @@ class ResetPasswordView(APIView):
             except OTPVerification.DoesNotExist:
                 return Response({'error': 'Invalid OTP or user not found'}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UserEditView(APIView):
+    permission_classes = [IsAdminUser]
+
+    @swagger_auto_schema(
+        request_body=UserRegistrationSerializer,
+        responses={200: 'User updated', 400: 'Invalid data', 403: 'Permission denied'}
+    )
+    def put(self, request, username):
+        try:
+            user = User.objects.get(username=username)
+            serializer = UserRegistrationSerializer(user, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'message': 'User updated'}, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+class UserDeleteView(APIView):
+    permission_classes = [IsAdminUser]
+
+    @swagger_auto_schema(responses={200: 'User deleted', 403: 'Permission denied', 404: 'User not found'})
+    def delete(self, request, username):
+        try:
+            user = User.objects.get(username=username)
+            user.delete()
+            return Response({'message': 'User deleted'}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
