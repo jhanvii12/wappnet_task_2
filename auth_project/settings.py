@@ -38,7 +38,6 @@ AUTH_USER_MODEL = 'users.CustomUser'
 # Authentication backends
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'users.backends.EmailBackend',
 ]
 
 # Configure REST Framework
