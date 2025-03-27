@@ -12,3 +12,5 @@ static/
 # Virtualenv #
 # authenv/
 .env
+
+modelsref.txt
