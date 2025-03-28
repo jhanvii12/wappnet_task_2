@@ -20,7 +20,6 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -59,9 +58,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'drf_yasg',
+    'django_celery_beat',
     'users',
     'projects',
     'tasks',
+    'schedule',
 ]
 
 MIDDLEWARE = [
@@ -148,6 +149,15 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')  # Your Gmail address
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')  # Your Gmail password or app-specific password
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL') 
 
+# Celery settings
+CELERY_BROKER_URL = 'redis://localhost:6379/1'  # Requires Redis installed
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
+CELERY_BEAT_SCHEDULE = {
+    'check-task-deadlines': {
+        'task': 'schedule.tasks.check_task_deadlines',
+        'schedule': 60,  # Run daily (86400 seconds = 24 hours)
+    },
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
