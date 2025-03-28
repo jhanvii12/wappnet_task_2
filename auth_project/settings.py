@@ -150,14 +150,21 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')  # Your Gmail password or
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL') 
 
 # Celery settings
-CELERY_BROKER_URL = 'redis://localhost:6379/1'  # Requires Redis installed
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
-CELERY_BEAT_SCHEDULE = {
-    'check-task-deadlines': {
-        'task': 'schedule.tasks.check_task_deadlines',
-        'schedule': 60,  # Run daily (86400 seconds = 24 hours)
-    },
-}
+# CELERY_BROKER_URL = 'redis://localhost:6379/1'  # Requires Redis installed
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379/1'
+# CELERY_BEAT_SCHEDULE = {
+#     'check-task-deadlines': {
+#         'task': 'schedule.tasks.check_task_deadlines',
+#         'schedule': 60,  # Run every 60 seconds
+#     },
+# }
+from celery.schedules import crontab
+CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Or your broker
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/

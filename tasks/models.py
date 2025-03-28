@@ -25,6 +25,7 @@ class Task(models.Model):
     status = models.CharField(max_length=11, choices=STATUS_CHOICES, default='NOT_STARTED')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    dependency = models.ManyToManyField('self', symmetrical=False, blank=True, related_name='dependent_tasks')
 
     def __str__(self):
         return self.title
