@@ -34,6 +34,13 @@ ALLOWED_HOSTS = []
 # Custom user model
 AUTH_USER_MODEL = 'users.CustomUser'
 
+# Media files settings
+import os
+
+# Media files settings
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Store media files in a 'media' directory inside the project
+MEDIA_URL = '/media/'  # URL for accessing media files
+
 # Authentication backends
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -64,6 +71,7 @@ INSTALLED_APPS = [
     'tasks',
     'schedule',
     'resources',
+    'filemanager',
 ]
 
 MIDDLEWARE = [

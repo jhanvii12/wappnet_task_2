@@ -14,17 +14,6 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-# from django.contrib import admin
-# from django.urls import path, include
-# from users.swagger import schema_view  # Import from swagger.py
-
-# urlpatterns = [
-#     path('admin/', admin.site.urls),
-#     path('users/', include('users.urls')),  
-#     # Swagger URL configurations
-#     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-#     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),  # for Redoc UI  
-# ]
 
 from django.contrib import admin
 from django.urls import include, path, re_path
@@ -57,4 +46,5 @@ urlpatterns = [
     path('tasks/', include('tasks.urls')),
     path('schedule/', include('schedule.urls')),
     path('resources/', include('resources.urls')),
+    path('filemanager/', include('filemanager.urls')),
 ]
