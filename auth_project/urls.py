@@ -56,4 +56,5 @@ urlpatterns = [
     path('projects/', include('projects.urls')),
     path('tasks/', include('tasks.urls')),
     path('schedule/', include('schedule.urls')),
+    path('resources/', include('resources.urls')),
 ]

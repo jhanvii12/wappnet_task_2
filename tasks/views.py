@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from .models import Task, TaskStatus
 from .serializers import TaskSerializer, TaskStatusSerializer
 from django.db import models
+from django.conf import settings
+from django.core.mail import send_mail
 
 class TaskViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
@@ -21,15 +23,27 @@ class TaskViewSet(viewsets.ModelViewSet):
         # Automatically set the status update when creating a task
         task = serializer.save()
         TaskStatus.objects.create(task=task, status=task.status)
+         # Send notification
+        self.send_notification(task)
 
     def perform_update(self, serializer):
         # Create a status update when status changes
         instance = serializer.instance
         new_status = self.request.data.get('status')
         task = serializer.save()
+         # Send notification
+        self.send_notification(task)
         
         if new_status and new_status != instance.status:
             TaskStatus.objects.create(task=task, status=new_status)
+    
+    def send_notification(self, task):
+        # Send email notification to assignee
+        if task.assignee and task.assignee.email:
+            subject = f"New Task Assigned: {task.title}"
+            message = f"You have been assigned a new task: {task.description}"
+            recipient_list = [task.assignee.email]
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, recipient_list, fail_silently=True)
 
 class TaskStatusViewSet(viewsets.ModelViewSet):
     serializer_class = TaskStatusSerializer
