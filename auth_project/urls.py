@@ -47,4 +47,5 @@ urlpatterns = [
     path('schedule/', include('schedule.urls')),
     path('resources/', include('resources.urls')),
     path('filemanager/', include('filemanager.urls')),
+    path('reports/', include('reports.urls')),
 ]
