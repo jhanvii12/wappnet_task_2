@@ -42,7 +42,7 @@ class FileAttachmentView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, request, pk):  # Added GET method for completeness
+    def get(self, request, pk):
         try:
             attachment = FileAttachment.objects.get(pk=pk)
             serializer = FileAttachmentSerializer(attachment)
@@ -57,9 +57,19 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         """ Automatically assign the authenticated user when creating a comment. """
-        task = self.request.data.get("task")
-        project = self.request.data.get("project")
-        serializer.save(user=self.request.user)
+        task_id = self.request.data.get("task")
+        project_id = self.request.data.get("project")
+
+        print(f"Received task ID: {task_id}")  # Debugging
+        print(f"Received project ID: {project_id}")  # Debugging
+
+        task = Task.objects.get(pk=task_id) if task_id else None
+        project = Project.objects.get(pk=project_id) if project_id else None
+
+        print(f"Resolved Task Object: {task}")  # Debugging
+        print(f"Resolved Project Object: {project}")  # Debugging
+
+        serializer.save(user=self.request.user, task=task, project=project)
 
     def get_queryset(self):
         """
@@ -77,7 +87,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         return queryset
 
     @action(detail=False, methods=['get'])
-    def my_comments(self, request):
+    def mycomments(self, request):
         """ Return only the comments made by the authenticated user. """
         comments = Comment.objects.filter(user=request.user)
         serializer = self.get_serializer(comments, many=True)

@@ -5,7 +5,7 @@ from django.db import models
 from django.conf import settings
 
 class Comment(models.Model):
-    task = models.ForeignKey('tasks.Task', on_delete=models.CASCADE, related_name='comments')
+    task = models.ForeignKey('tasks.Task', on_delete=models.CASCADE, null=True, blank=True, related_name='comments')
     project = models.ForeignKey('projects.Project', on_delete=models.CASCADE, null=True, blank=True, related_name='comments')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='comments')
     content = models.TextField()
